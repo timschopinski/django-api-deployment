@@ -21,20 +21,27 @@ services:
       - redis
       - db
 
-  redis:
-    image: 'redis:7.0.8'
-
   db:
     image: postgres:13
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-#    environment:
-#      - POSTGRES_USER=${DB_USERNAME}
-#      - POSTGRES_PASSWORD=${DB_PASSWORD}
-#      - POSTGRES_DB=${DB_NAME}
-#      - POSTGRES_HOST_AUTH_METHOD=trust"
     env_file:
       - ./app/app/.env
+
+  redis:
+    image: 'redis:7.0.8'
+
+  celery:
+    build: .
+    command: celery -A app worker -l info
+    volumes:
+      - .:/code
+    env_file:
+      - ./app/app/.env
+    depends_on:
+      - db
+      - redis
+      - app
 
 
 volumes:

@@ -118,11 +118,11 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-#  Caches
+#  CACHE
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "REDIS_BACKEND",
+        "LOCATION": os.getenv("REDIS_BACKEND"),
     },
 }
 
@@ -148,3 +148,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# CELERY
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = os.getenv("REDIS_BACKEND")
