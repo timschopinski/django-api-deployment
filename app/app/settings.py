@@ -41,11 +41,14 @@ DJANGO_APPS = (
 )
 
 PROJECT_APPS = (
-    'api',
+    'books',
 )
 
 THIRD_PARTY_APPS = (
     'rest_framework',
+    'corsheaders',
+    'drf_yasg',
+    'rest_framework_swagger',
 )
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY_APPS
