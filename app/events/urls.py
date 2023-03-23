@@ -4,7 +4,7 @@ from . import viewsets
 
 
 router = DefaultRouter()
-router.register(r'', viewsets.BookViewSet, basename='book')
+router.register(r'', viewsets.EventViewSet, basename='event')
 
 
 urlpatterns = [

@@ -41,7 +41,7 @@ DJANGO_APPS = (
 )
 
 PROJECT_APPS = (
-    'books',
+    'events',
 )
 
 THIRD_PARTY_APPS = (
