@@ -5,10 +5,13 @@ services:
   app:
     build:
       context: .
+      dockerfile: Dockerfile
     ports:
       - "8000:8000"
     volumes:
       - ./app:/app
+    env_file:
+      - ./app/app/.env
     command: >
       sh -c "python manage.py wait_for_db &&
              python manage.py migrate &&
@@ -16,6 +19,23 @@ services:
 
     depends_on:
       - redis
+      - db
 
   redis:
     image: 'redis:7.0.8'
+
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+#    environment:
+#      - POSTGRES_USER=${DB_USERNAME}
+#      - POSTGRES_PASSWORD=${DB_PASSWORD}
+#      - POSTGRES_DB=${DB_NAME}
+#      - POSTGRES_HOST_AUTH_METHOD=trust"
+    env_file:
+      - ./app/app/.env
+
+
+volumes:
+  postgres_data:
