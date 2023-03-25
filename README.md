@@ -64,7 +64,7 @@ CELERY_BEAT_SCHEDULE = {
 }
 ```
 
-## Deployment
+## Production
 To deploy the app to a production environment, you'll need to use the docker-compose.prod.yaml file and an Nginx configuration.
 The docker-compose.prod.yaml file builds and runs the production version of the application. It is similar to the development version with some important differences, such as the removal of the volumes section, since we won't be using mounted volumes in production, and the addition of an env_file section, which loads the production environment variables from the .env_prod file. Here is the content of the docker-compose.prod.yaml file: 
 
@@ -171,15 +171,48 @@ server {
 }
 
 ````
+## Deployment
+Follow the steps below to deploy the Django Rest Framework API to an AWS EC2 instance:
+1. Create an AWS account <br>
+If you don't have one already, create an AWS account by visiting https://aws.amazon.com/ and clicking on "Create an AWS Account".
+2. Create an Amazon Linux EC2 instance <br>
+Once you have created an AWS account, create an Amazon Linux EC2 instance by following these steps:
+- Login to the AWS console.
+- Click on the "EC2" service.
+- Click on the "Launch Instance" button.
+- Select the "Amazon Linux 2 AMI" instance type.
+- Select an instance type, such as "t2.micro".
+- Click on "Review and Launch" button.
+- Click on "Launch" button.
+3. Create a .pem file and connect via SSH <br>
+- Create a .pem file and connect to the EC2 instance via SSH by following these steps:
+- In the AWS console, select the EC2 instance that you just created.
+- Click on the "Connect" button.
+- Follow the instructions to create a new key pair or use an existing one.
+- Click on "Download Remote Access Key" to download the .pem file.
+- Change the permissions of the .pem file by running chmod 400 /path/to/your-key-pair.pem.
+- Connect to the EC2 instance via SSH by running ssh -i /path/to/your-key-pair.pem ec2-user@ec2-xx-xx-xx-xx.compute-1.amazonaws.com.
+4. Install Docker and Docker Compose <br>
+Install Docker and Docker Compose on the EC2 instance by running the following commands:
+```bash
+sudo yum update -y
+sudo amazon-linux-extras install docker
+sudo service docker start
+sudo usermod -a -G docker ec2-user
+sudo chkconfig docker on
+sudo curl -L https://github.com/docker/compose/releases/download/1.29.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+```
+5. Push the Docker image to Docker Hub <br>
+Push the Docker image to Docker Hub by following these steps:
+- Login to Docker Hub by running docker login.
+- Tag the Docker image by running docker tag <image-id> <username>/<repository>:<tag>.
+- Push the Docker image by running docker push <username>/<repository>:<tag>.
+6. Pull the Docker image and run <br>
+Pull the Docker image from Docker Hub and run it on the EC2 instance by following these steps:
+- SSH into the EC2 instance.
+- Create a docker-compose.yml file with the appropriate configuration.
+- Run the Docker containers by running docker-compose up -d.
 
-## Deployment Steps
-To deploy the application, follow these steps:
+And that's it! Your Django Rest Framework API should now be running on the AWS EC2 instance.
 
-- SSH into the Droplet using your Digital Ocean account and clone the repository.
-- Create a .env_prod file and fill in the required environment variables.
-- Run docker-compose -f docker-compose.prod.yaml up -d to start the production containers in detached mode.
-- Run docker-compose -f docker-compose.prod.yaml run --rm app python manage.py migrate to apply the database migrations.
-- Create a superuser by running docker-compose -f docker-compose.prod.yaml run --rm app python manage.py createsuperuser.
-- Visit the Droplet's IP address in a web browser to verify that the application is running.
-- 
-And that's it! You have successfully deployed a Dockerized Django Rest Framework API to a Digital Ocean Droplet using Nginx and Gunicorn.
