@@ -1,0 +1,70 @@
+version: "3"
+
+services:
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    restart: always
+    expose:
+      - 8000
+    volumes:
+      - static_volume:/vol/web/static
+      - media_volume:/vol/web/media
+    env_file:
+      - app/app/.env_prod
+    depends_on:
+      - redis
+      - db
+
+  db:
+    restart: always
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - app/app/.env_prod
+
+  redis:
+    image: 'redis:7.0.8'
+
+  celery:
+    restart: always
+    build: .
+    command: celery -A app worker -l info
+    volumes:
+      - ./app:/app
+    env_file:
+      - app/app/.env_prod
+    depends_on:
+      - redis
+      - db
+
+  celery-beat:
+    restart: always
+    build: .
+    command: celery -A app beat -l info
+    volumes:
+      - ./app:/app
+    env_file:
+      - app/app/.env_prod
+    depends_on:
+      - redis
+      - db
+
+  nginx:
+    build: ./nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - static_volume:/vol/web/static
+      - media_volume:/vol/web/media
+    depends_on:
+      - app
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
