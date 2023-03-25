@@ -1,4 +1,4 @@
-# Deploying a Dockerized Django Rest Framework API to Digital Ocean Droplet with Nginx and Gunicorn
+# Deploying a Dockerized Django Rest Framework API to AWS EC2 Instance with Nginx and Gunicorn
 This guide will walk you through the process of deploying a dockerized multicontainer Django Rest Framework API built with Django, Postgres, Redis, Celery, and Celery Beat to a Digital Ocean Droplet using Nginx and Gunicorn.
 
 ## Description
