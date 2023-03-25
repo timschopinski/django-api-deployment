@@ -21,7 +21,8 @@ Clone this repository
 - Start the containers by running docker-compose up.
 - Once the containers are running, create a superuser by running docker-compose run app python manage.py createsuperuser.
 - Visit http://<your-host>:8000/swagger/ to view the API documentation.
-### CODE
+
+Execute
 ```yaml
 docker-compose build
 docker-compose up
