@@ -38,6 +38,31 @@ docker-compose run --rm app sh -c "python manage.py createsuperuser"
 - DELETE /events/{id}/: Delete an event by ID.
 - POST /events/notification/: Create a notification.
 
+## Celery
+Celery is a powerful asynchronous task queue that can be used with Django to run tasks in the background, outside of the request-response cycle. This allows you to offload time-consuming tasks such as sending emails or processing large files to separate worker processes, freeing up your web server to handle incoming requests more efficiently.
+
+
+To get started with Celery in your Django project, you'll need to follow these steps:
+
+1) add celery, django-celery-beat to requirements.txt
+
+2) Add the following settings to your Django settings.py file:
+```python
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = os.getenv("REDIS_BACKEND")
+CELERY_BEAT_SCHEDULE_FILENAME = '/app/celerybeat-schedule'
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+```
+3) To schedule tasks, add CELERY_BEAT_SCHEDULE to settings.py
+```python
+CELERY_BEAT_SCHEDULE = {
+    "some_task": {
+        "task": "your_app.tasks.some_task",
+        "schedule": crontab(minute="*"),
+    },
+}
+```
+
 ## Deployment
 To deploy the app to a production environment, you'll need to use the docker-compose.prod.yaml file and an Nginx configuration.
 The docker-compose.prod.yaml file builds and runs the production version of the application. It is similar to the development version with some important differences, such as the removal of the volumes section, since we won't be using mounted volumes in production, and the addition of an env_file section, which loads the production environment variables from the .env_prod file. Here is the content of the docker-compose.prod.yaml file: 
